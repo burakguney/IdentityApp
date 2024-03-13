@@ -40,13 +40,13 @@ namespace IdentityApp.Controllers
 
                 foreach (IdentityError error in result.Errors)
                 {
-                    ModelState.AddModelError("", error.Description);   
+                    ModelState.AddModelError("", error.Description);
                 }
             }
 
             return View(model);
         }
-        
+
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
@@ -70,6 +70,49 @@ namespace IdentityApp.Controllers
             };
 
             return View(editViewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(string id, EditViewModel model)
+        {
+            if (id != model.Id)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (ModelState.IsValid)
+            {
+                var user = await userManager.FindByIdAsync(id);
+
+                if (user == null)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+
+                user.UserName = model.UserName;
+                user.FullName = model.FullName;
+                user.Email = model.Email;
+
+                var result = await userManager.UpdateAsync(user);
+
+                if (result.Succeeded && !string.IsNullOrEmpty(model.Password))
+                {
+                    await userManager.RemovePasswordAsync(user);
+                    await userManager.AddPasswordAsync(user, model.Password);
+                }
+
+                if (result.Succeeded)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+
+                foreach (var err in result.Errors)
+                {
+                    ModelState.AddModelError("", err.Description);
+                }
+            }
+
+            return View(model);
         }
     }
 }
