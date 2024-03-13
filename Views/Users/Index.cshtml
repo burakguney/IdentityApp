@@ -19,7 +19,7 @@
                 <td>@user.FullName</td>
                 <td>@user.Email</td>
                 <td>
-                    <a href="" class="btn-sm btn-primary text-decoration-none">Edit</a>
+                    <a asp-controller="Users" asp-action="Edit" asp-route-id="@user.Id" class="btn-sm btn-primary text-decoration-none">Edit</a>
                     <a href="" class="btn-sm btn-danger text-decoration-none">Delete</a>
                 </td>
             </tr>

@@ -46,5 +46,30 @@ namespace IdentityApp.Controllers
 
             return View(model);
         }
+        
+        public async Task<IActionResult> Edit(string id)
+        {
+            if (id == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            var user = await userManager.FindByIdAsync(id);
+
+            if (user == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            EditViewModel editViewModel = new()
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                FullName = user.FullName
+            };
+
+            return View(editViewModel);
+        }
     }
 }
