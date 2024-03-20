@@ -1,0 +1,36 @@
+﻿@model IEnumerable<AppRole>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Users</th>
+            <td>
+                <a asp-controller="Roles" asp-action="Create" class="btn-sm btn-success text-decoration-none">Create Role</a>
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+
+        @if (Model.Count() == 0)
+        {
+            <tr><td class="text-center">No role found</td></tr>
+        }
+
+        @foreach (var role in Model)
+        {
+            <tr>
+                <td>@role.Name</td>
+                <td>User List</td>
+                <td>
+                    <a asp-controller="Roles" asp-action="Edit" asp-route-id="@role.Id" class="btn btn-sm btn-primary text-decoration-none">Edit</a>
+                    <form asp-controller="Roles" asp-action="Delete" method="post">
+                        <input type="hidden" value="@role.Id" name="id" />
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

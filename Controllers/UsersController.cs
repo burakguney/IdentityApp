@@ -16,7 +16,9 @@ namespace IdentityApp.Controllers
 
         public IActionResult Index()
         {
-            return View(userManager.Users);
+            var users = userManager.Users;
+
+            return View(users);
         }
 
         public IActionResult Create()
