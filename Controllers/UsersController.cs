@@ -2,16 +2,19 @@
 using IdentityApp.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace IdentityApp.Controllers
 {
     public class UsersController : Controller
     {
         private readonly UserManager<AppUser> userManager;
+        private readonly RoleManager<AppRole> roleManager;
 
-        public UsersController(UserManager<AppUser> userManager)
+        public UsersController(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager)
         {
             this.userManager = userManager;
+            this.roleManager = roleManager;
         }
 
         public IActionResult Index()
@@ -31,7 +34,11 @@ namespace IdentityApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new AppUser { UserName = model.UserName, Email = model.Email, FullName = model.FullName };
+                var user = new AppUser { 
+                    UserName = model.UserName, 
+                    Email = model.Email, 
+                    FullName = model.FullName 
+                };
 
                 IdentityResult result = await userManager.CreateAsync(user, model.Password);
 
@@ -63,12 +70,15 @@ namespace IdentityApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            ViewBag.Roles = await roleManager.Roles.Select(i => i.Name).ToListAsync();
+
             EditViewModel editViewModel = new()
             {
                 Id = user.Id,
                 UserName = user.UserName,
                 Email = user.Email,
-                FullName = user.FullName
+                FullName = user.FullName,
+                SelectedRoles = await userManager.GetRolesAsync(user)
             };
 
             return View(editViewModel);
