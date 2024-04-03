@@ -34,10 +34,11 @@ namespace IdentityApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new AppUser { 
-                    UserName = model.UserName, 
-                    Email = model.Email, 
-                    FullName = model.FullName 
+                var user = new AppUser
+                {
+                    UserName = model.UserName,
+                    Email = model.Email,
+                    FullName = model.FullName
                 };
 
                 IdentityResult result = await userManager.CreateAsync(user, model.Password);
@@ -115,6 +116,11 @@ namespace IdentityApp.Controllers
 
                 if (result.Succeeded)
                 {
+                    await userManager.RemoveFromRolesAsync(user, await userManager.GetRolesAsync(user));
+                    if (model.SelectedRoles != null)
+                    {
+                        await userManager.AddToRolesAsync(user, model.SelectedRoles);
+                    }
                     return RedirectToAction(nameof(Index));
                 }
 
